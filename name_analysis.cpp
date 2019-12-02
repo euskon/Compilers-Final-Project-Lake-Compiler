@@ -28,6 +28,10 @@ bool ProgramNode::nameAnalysis(SymbolTable * symTab){
 	//Enter the global scope
 	symTab->enterScope();
 	bool res = this->myDeclList->nameAnalysis(symTab);
+	//add check for main
+	if(symTab->find("main") == nullptr){
+		throw new InternalError("No function called main exists! Major Problemo sir/madam!\n");
+	}
 	//Leave the global scope
 	symTab->leaveScope();
 	return res;
