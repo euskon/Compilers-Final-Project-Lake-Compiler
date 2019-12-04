@@ -199,7 +199,9 @@ bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
 		atFnScope->insert(fnSym);
 		getDeclaredID()->attachSymbol(fnSym);
 	}
-
+	//set number of parameters
+	numParams = myFormals->getDecls()->size();
+	numLocals = myBody->getBodyDecls()->getListSize();
 	bool validBody = myBody->nameAnalysis(symTab);
 
 	symTab->leaveScope();

@@ -5,15 +5,37 @@
 namespace lake{
 
 void IRProgram::allocGlobals(){
-	TODO(Implement me)
+	int a = 0;
+	std::map<SemSymbol*, SymOpd*>::iterator globItr = globals.begin();
+	while(globItr != globals.end()){
+		globItr->second->setMemoryLoc(std::to_string(a));
+		a++;
+		++globItr;
+	}
+	//may need to iterate over strings and give them memLocs too
 }
 
 void IRProgram::datagenX64(std::ostream& out){
-	TODO(Implement me)
+	std::map<SemSymbol*, SymOpd*>::iterator globItr = globals.begin();
+	while(globItr != globals.end()){
+		std::string name = globItr->first->getName();
+		out << "gbl_" + name << ":\n\t.quad " << 0 << "\n";
+		max_label++;
+		++globItr;
+	}
+	HashMap<AuxOpd*, std::string>::iterator strItr = strings.begin();
+	while(strItr != strings.end()){
+		std::string name = strItr->first->getName();
+		out << "str_" + name << ":\n\t.asciz " << strItr->second << "\n";
+		str_idx++;
+		++strItr;
+	}
+	out << ".align 8\n";
 }
 
 void IRProgram::toX64(std::ostream& out){
-	TODO(Implement me)
+	out << ".data\n";
+	this->datagenX64(out);
 }
 
 void Procedure::allocLocals(){

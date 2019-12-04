@@ -100,6 +100,7 @@ public:
 	virtual bool nameAnalysis(SymbolTable *);
 	virtual void typeAnalysis(TypeAnalysis *);
 	virtual void to3AC(Procedure * proc);
+	int getListSize(){ return myDecls->size(); }
 private:
 	std::list<VarDeclNode *> * myDecls;
 };
@@ -245,6 +246,7 @@ public:
 	bool nameAnalysis(SymbolTable * symTab) override;
 	virtual void typeAnalysis(TypeAnalysis *, FnType * fnType);
 	void to3AC(Procedure * proc);
+	VarDeclListNode* getBodyDecls(){ return myVarDecls; }
 private:
 	StmtListNode * myStmtList;
 	VarDeclListNode * myVarDecls;
@@ -299,6 +301,8 @@ private:
 	FnBodyNode * myBody;
 	TypeNode * myRetAST;
 	FnType * myType;
+	int numParams = 0;
+	int numLocals;
 	//Note that FnDeclNode does not have it's own 
 	// myId field. Instead, it uses it's inherited
 	// myDeclaredID field from the DeclNode
