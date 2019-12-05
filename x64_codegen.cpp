@@ -5,12 +5,15 @@
 namespace lake{
 
 void IRProgram::allocGlobals(){
-	int a = 0;
 	std::map<SemSymbol*, SymOpd*>::iterator globItr = globals.begin();
 	while(globItr != globals.end()){
-		globItr->second->setMemoryLoc(std::to_string(a));
-		a++;
+		globItr->second->setMemoryLoc("(gbl_" + globItr->first->getName() + ")");
 		++globItr;
+	}
+	HashMap<AuxOpd*, std::string>::iterator strItr = strings.begin();
+	while(strItr != strings.end()){
+		strItr->first->setMemoryLoc("(str_" + strItr->first->getName() + ")");
+		++strItr;
 	}
 	//may need to iterate over strings and give them memLocs too
 }
@@ -20,18 +23,24 @@ void IRProgram::datagenX64(std::ostream& out){
 	while(globItr != globals.end()){
 		std::string name = globItr->first->getName();
 		out << "gbl_" + name << ":\n\t.quad " << 0 << "\n";
-		max_label++;
 		++globItr;
 	}
 	HashMap<AuxOpd*, std::string>::iterator strItr = strings.begin();
 	while(strItr != strings.end()){
 		std::string name = strItr->first->getName();
-		out << "str_" << str_idx << ":\n\t.asciz " << strItr->second << "\n";
-		max_label++;
-		str_idx++;
+		out << "str_" << name << ":\n\t.asciz " << strItr->second << "\n";
 		++strItr;
 	}
 	out << ".align 8\n";
+	for(auto procItr : procs){
+		procItr->allocLocals();
+	}
+	// std::list<Procedure *>::iterator listProcItr = procs.begin();
+	// while(listProcItr != procs.end()){
+	// 	(*listProcItr)->allocLocals();
+	// 	++listProcItr;
+	// }
+	
 }
 
 void IRProgram::toX64(std::ostream& out){
@@ -40,12 +49,18 @@ void IRProgram::toX64(std::ostream& out){
 }
 
 void Procedure::allocLocals(){
-	TODO(Implement me)
+	int loc = 16;
+	std::map<SemSymbol* , SymOpd*>::iterator localItr = locals.begin();
+	while(localItr != locals.end()){
+		localItr->second->setMemoryLoc("-" + to_string(loc) + "(%rbp)");
+		loc += 8;
+		++localItr;
+	}
 }
 
 void Procedure::toX64(std::ostream& out){
-	//Allocate all locals
-	allocLocals();
+	//Allocate all locals(given by drew)
+	//allocLocals();
 
 	out << "fun_" << myName << ":" << "\n";
 

@@ -311,9 +311,8 @@ public:
 	void toX64(std::ostream& out);
 	size_t numLocals() const;
 	size_t numTemps() const;
-private:
 	void allocLocals();
-
+private:
 	EnterQuad * enter;
 	Quad * leave;
 	Label * leaveLabel;

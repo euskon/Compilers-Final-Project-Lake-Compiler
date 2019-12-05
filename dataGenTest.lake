@@ -1,0 +1,6 @@
+int x;
+bool myBool;
+
+int main(){
+    write "poo";
+}
