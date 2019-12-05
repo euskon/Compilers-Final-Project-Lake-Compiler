@@ -26,7 +26,8 @@ void IRProgram::datagenX64(std::ostream& out){
 	HashMap<AuxOpd*, std::string>::iterator strItr = strings.begin();
 	while(strItr != strings.end()){
 		std::string name = strItr->first->getName();
-		out << "str_" + name << ":\n\t.asciz " << strItr->second << "\n";
+		out << "str_" << str_idx << ":\n\t.asciz " << strItr->second << "\n";
+		max_label++;
 		str_idx++;
 		++strItr;
 	}
