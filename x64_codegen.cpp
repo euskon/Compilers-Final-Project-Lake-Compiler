@@ -32,8 +32,10 @@ void IRProgram::datagenX64(std::ostream& out){
 		++strItr;
 	}
 	out << ".align 8\n";
+	allocGlobals();
 	for(auto procItr : procs){
 		procItr->allocLocals();
+		procItr->toX64(out);
 	}
 	// std::list<Procedure *>::iterator listProcItr = procs.begin();
 	// while(listProcItr != procs.end()){
@@ -86,7 +88,33 @@ void Quad::codegenLabels(std::ostream& out){
 }
 
 void BinOpQuad::codegenX64(std::ostream& out){
-	TODO(Implement me)
+	switch(op){
+		case ADD:
+				break;
+		case SUB:
+				break;
+		case DIV:
+				break;
+		case MULT:
+				break;
+		case OR:
+				break;
+		case AND:
+				break;
+		case EQ:
+				break;
+		case NEQ:
+				break;
+		case LT:
+				break;
+		case GT:
+				break;
+		case LTE:
+				break;
+		case GTE:
+				break;
+
+	}
 }
 
 void UnaryOpQuad::codegenX64(std::ostream& out){
@@ -115,7 +143,25 @@ void NopQuad::codegenX64(std::ostream& out){
 }
 
 void SyscallQuad::codegenX64(std::ostream& out){
-	TODO(Implement me)
+	if(mySyscall == READ){
+		if(myArg->getType() == NUMERIC){
+
+		}
+		else{
+
+		}
+	}
+	else if(mySyscall == WRITE){
+		if(myArg->getType() == NUMERIC){
+
+		}
+		else{
+
+		}
+	}
+	else if(mySyscall == EXIT){
+		// myArg->
+	}
 }
 
 void CallQuad::codegenX64(std::ostream& out){
@@ -147,27 +193,28 @@ void GetOutQuad::codegenX64(std::ostream& out){
 }
 
 void SymOpd::genLoad(std::ostream & out, std::string regStr){
-	TODO(Implement me)
+	out << "movq " << myLoc << ", " << regStr;
 }
 
 void SymOpd::genStore(std::ostream& out, std::string regStr){
-	TODO(Implement me)
+	out << "movq " << regStr << ", " << myLoc;
 }
 
 void AuxOpd::genLoad(std::ostream & out, std::string regStr){
-	TODO(Implement me)
+	out << "movq " << myLoc << ", " << regStr;
 }
 
 void AuxOpd::genStore(std::ostream& out, std::string regStr){
-	TODO(Implement me)
+	out << "movq " << regStr << ", " << myLoc;
 }
 
 void LitOpd::genLoad(std::ostream & out, std::string regStr){
-	TODO(Implement me)
+	throw new InternalError("Cannot use literal as l-val");
 }
 
 void LitOpd::genStore(std::ostream& out, std::string regStr){
-	throw new InternalError("Cannot use literal as l-val");
+	//throw new InternalError("Cannot use literal as l-val");
+	out << "movq $" << val << ", " << regStr;
 }
 
 }
