@@ -83,7 +83,7 @@ void Quad::codegenLabels(std::ostream& out){
 	size_t numLabels = labels.size();
 	size_t labelIdx = 0;
 	for ( Label * label : labels){
-		out << label->toString() << ": ";
+		out << label->toString() << ": \n";
 		if (labelIdx != numLabels - 1){ out << "\n"; }
 		labelIdx++;
 	}
@@ -222,7 +222,9 @@ void SyscallQuad::codegenX64(std::ostream& out){
 		}
 	}
 	else if(mySyscall == EXIT){
-		// nothing required here
+		out << "movq $60, %rax\n";
+		out << "movq $0, %rdi\n";
+		out << "syscall\n";
 	}
 }
 

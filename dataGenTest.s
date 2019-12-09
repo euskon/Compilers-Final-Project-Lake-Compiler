@@ -14,7 +14,8 @@ addq $16, %rbp
 subq $0, %rsp
 movq (str_0), %rdi
 callq printString
-lbl_0: addq $0, %rsp
+lbl_0: 
+addq $0, %rsp
 movq (%rsp), %rbp
 addq $8, %rsp
 retq
@@ -30,3 +31,6 @@ movq %rax, (gbl_x)
 movq $1, %rax
 movq %rax, -16(%rbp)
 lbl_1: 
+movq $60, %rax
+movq $0, %rdi
+syscall
