@@ -4,5 +4,8 @@ int foo(){
     write "poo";
 }
 int main(){
+    bool myLocal;
     foo();
+    x = 5;
+    myLocal = true;
 }
