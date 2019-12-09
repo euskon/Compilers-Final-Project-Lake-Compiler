@@ -6,3 +6,4 @@ gbl_myBool:
 str_str_0:
 	.asciz "poo"
 .align 8
+fun_foo:

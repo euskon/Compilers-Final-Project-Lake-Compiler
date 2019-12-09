@@ -2,8 +2,7 @@ int x;
 bool myBool;
 int foo(){
     write "poo";
-    main();
 }
 int main(){
-
+    foo();
 }

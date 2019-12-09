@@ -90,35 +90,75 @@ void Quad::codegenLabels(std::ostream& out){
 void BinOpQuad::codegenX64(std::ostream& out){
 	switch(op){
 		case ADD:
+				src1->genLoad(out, "%rax");
+				src2->genStore(out, "%rbx");
+				out << "addq %rbx, %rax\n";
 				break;
 		case SUB:
+				src1->genLoad(out, "%rax");
+				src2->genLoad(out, "%rbx");
+				out << "subq %rbx, %rax\n";
 				break;
 		case DIV:
+				out << "movq $0, %rdx\n";
+				src1->genLoad(out, "%rax");
+				src2->genLoad(out, "%rdx");
+				out << "idivq %rbx\n";
+				dst->genStore(out, "%rax");
+				//return;
 				break;
 		case MULT:
+				src1->genLoad(out, "%rax");
+				src2->genLoad(out, "%rdx");
+				out << "imulq %rbx\n";
+				dst->genStore(out, "%rax");
+				//return;
 				break;
 		case OR:
+				src1->genLoad(out, "%rax");
+				src2->genLoad(out, "%rbx");
+				out << "orq %rbx, %rax\n";
 				break;
 		case AND:
+				src1->genLoad(out, "%rax");
+				src2->genLoad(out, "%rbx");
+				out << "andq %rbx, %rax\n";
 				break;
 		case EQ:
+				src1->genLoad(out, "%rax");
+				src2->genLoad(out, "%rbx");
+				out << "cmpq %rbx, %rax\n";
 				break;
 		case NEQ:
+				src1->genLoad(out, "%rax");
+				src2->genLoad(out, "%rbx");
+				out << "cmpq %rbx, %rax\n";
 				break;
 		case LT:
+				src1->genLoad(out, "%rax");
+				src2->genLoad(out, "%rbx");
+				out << "cmpq %rbx, %rax\n";
 				break;
 		case GT:
+				src1->genLoad(out, "%rax");
+				src2->genLoad(out, "%rbx");
+				out << "cmpq %rbx, %rax\n";
 				break;
 		case LTE:
+				src1->genLoad(out, "%rax");
+				src2->genLoad(out, "%rbx");
+				out << "cmpq %rbx, %rax\n";
 				break;
 		case GTE:
+				src1->genLoad(out, "%rax");
+				src2->genLoad(out, "%rbx");
+				out << "cmpq %rbx, %rax\n";
 				break;
-
 	}
 }
 
 void UnaryOpQuad::codegenX64(std::ostream& out){
-	TODO(Implement me)
+	
 }
 
 void AssignQuad::codegenX64(std::ostream& out){
