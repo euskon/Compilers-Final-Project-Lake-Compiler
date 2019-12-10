@@ -1,0 +1,8 @@
+int main(){
+    int x;
+    bool z;
+    read x;
+    read z;
+    write x;
+    write z;
+}

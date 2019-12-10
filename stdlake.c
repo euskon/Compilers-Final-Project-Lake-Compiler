@@ -3,10 +3,12 @@
 
 void printInt(long int num){
 	fprintf(stdout, "%ld\n", num);
+	fflush(stdout);
 }
 
 void printString(const char * str){
 	fprintf(stdout, "%s\n", str);
+	fflush(stdout);
 }
 
 long int getInt(){

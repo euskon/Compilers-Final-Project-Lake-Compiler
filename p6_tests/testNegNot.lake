@@ -1,0 +1,8 @@
+int main(){
+    bool x;
+    int z;
+    x = true;
+    z = 5;
+    write !x;
+    write -z;
+}

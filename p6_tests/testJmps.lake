@@ -1,0 +1,15 @@
+void bar(){
+    write "bar";
+}
+void foo(){
+    write "foo";
+}
+int main(){
+    write true;
+    if(true){
+        foo();
+    }
+    else{
+        bar();
+    }
+}

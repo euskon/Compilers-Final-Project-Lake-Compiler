@@ -12,12 +12,12 @@ all: $(TESTS)
 	@echo "TEST $*"
 	@../lakec $*.lake -o $*.s ;\
 	PROG_EXIT_CODE=$$?;\
-	as $*.s -o $*.o;\
-	ld -o $*.out $(LIBLINUX) -lc ../entry.o ../stdlake.o $*.o; \
-	./$*.out < $*.in > $*.out; \
+	as -o $*.o $*.s;\
+	ld -o $*.prog $(LIBLINUX) -lc ../entry.o ../stdlake.o $*.o; \
+	./$*.prog < $*.in > $*.out; \
 	diff -B --ignore-all-space $*.out $*.out.expected;\
 	TAC_DIFF_EXIT=$$?;\
 	exit $$TAC_DIFF_EXIT
 
 clean:
-	rm -f *.3ac *.out *.err
+	rm -f *.3ac *.out *.err *.prog *.s

@@ -1,0 +1,6 @@
+int foo(int x, int y){
+    return(x + y);
+}
+int main(){
+    write foo(13, 17);
+}

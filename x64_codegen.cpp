@@ -12,7 +12,7 @@ void IRProgram::allocGlobals(){
 	}
 	HashMap<AuxOpd*, std::string>::iterator strItr = strings.begin();
 	while(strItr != strings.end()){
-		strItr->first->setMemoryLoc("(" + strItr->first->getName() + ")");
+		strItr->first->setMemoryLoc("$" + strItr->first->getName());
 		++strItr;
 	}
 	//may need to iterate over strings and give them memLocs too
@@ -33,6 +33,7 @@ void IRProgram::datagenX64(std::ostream& out){
 	}
 	out << ".align 8\n";
 	allocGlobals();
+	out << ".text\n.globl fun_main\n";
 	for(auto procItr : procs){
 		procItr->allocLocals();
 		procItr->toX64(out);
@@ -53,7 +54,7 @@ void IRProgram::toX64(std::ostream& out){
 }
 
 void Procedure::allocLocals(){
-	int loc = 16;
+	int loc = 24;
 	std::map<SemSymbol* , SymOpd*>::iterator localItr = locals.begin();
 	while(localItr != locals.end()){
 		localItr->second->setMemoryLoc("-" + to_string(loc) + "(%rbp)");
@@ -63,6 +64,11 @@ void Procedure::allocLocals(){
 	for(auto tempItr : temps){
 		tempItr->setMemoryLoc("-" + to_string(loc) + "(%rbp)");
 		loc += 8;
+	}
+	loc = 8 * formals.size() - 8;
+	for(auto formalItr : formals){
+		formalItr->setMemoryLoc(to_string(loc) + "(%rbp)");
+		loc -= 8;
 	}
 }
 
@@ -97,13 +103,15 @@ void BinOpQuad::codegenX64(std::ostream& out){
 	switch(op){
 		case ADD:
 				src1->genLoad(out, "%rax");
-				src2->genStore(out, "%rbx");
+				src2->genLoad(out, "%rbx");
 				out << "addq %rbx, %rax\n";
+				dst->genStore(out, "%rax");
 				break;
 		case SUB:
 				src1->genLoad(out, "%rax");
 				src2->genLoad(out, "%rbx");
 				out << "subq %rbx, %rax\n";
+				dst->genStore(out, "%rax");
 				break;
 		case DIV:
 				out << "movq $0, %rdx\n";
@@ -124,11 +132,13 @@ void BinOpQuad::codegenX64(std::ostream& out){
 				src1->genLoad(out, "%rax");
 				src2->genLoad(out, "%rbx");
 				out << "orq %rbx, %rax\n";
+				dst->genStore(out, "%rax");
 				break;
 		case AND:
 				src1->genLoad(out, "%rax");
 				src2->genLoad(out, "%rbx");
 				out << "andq %rbx, %rax\n";
+				dst->genStore(out, "%rax");
 				break;
 		case EQ:
 				src1->genLoad(out, "%rax");
@@ -245,7 +255,7 @@ void SyscallQuad::codegenX64(std::ostream& out){
 }
 
 void CallQuad::codegenX64(std::ostream& out){
-	out << "callq " << callee->getName() << "\n";
+	out << "callq fun_" << callee->getName() << "\n";
 }
 
 void EnterQuad::codegenX64(std::ostream& out){
@@ -253,11 +263,11 @@ void EnterQuad::codegenX64(std::ostream& out){
 	out << "movq %rbp, (%rsp)\n";
 	out << "movq %rsp, %rbp\n";
 	out << "addq $16, %rbp\n";
-	out << "subq $" << myProc->numLocals() * 8 << ", %rsp\n";
+	out << "subq $" << (myProc->numLocals() + myProc->numTemps()) * 8 << ", %rsp\n";
 }
 
 void LeaveQuad::codegenX64(std::ostream& out){
-	out << "addq $" << myProc->numLocals() * 8 << ", %rsp\n";
+	out << "addq $" << (myProc->numLocals() + myProc->numTemps()) * 8 << ", %rsp\n";
 	out << "movq (%rsp), %rbp\n";
 	out << "addq $8, %rsp\n";
 	out << "retq\n";
@@ -265,7 +275,7 @@ void LeaveQuad::codegenX64(std::ostream& out){
 
 void SetInQuad::codegenX64(std::ostream& out){
 	out << "subq $8, %rsp\n";
-	opd->genLoad(out, "%rsp");
+	opd->genLoad(out, "(%rsp)");
 }
 
 void GetInQuad::codegenX64(std::ostream& out){
@@ -289,7 +299,12 @@ void SymOpd::genStore(std::ostream& out, std::string regStr){
 }
 
 void AuxOpd::genLoad(std::ostream & out, std::string regStr){
-	out << "movq " << myLoc << ", " << regStr << "\n";
+	//if(this->getType() == NUMERIC){
+		out << "movq " << myLoc << ", " << regStr << "\n";
+	//}
+	//else{
+	//	out << "movq " << myLoc << ", " << regStr << "\n";
+	//}
 }
 
 void AuxOpd::genStore(std::ostream& out, std::string regStr){
