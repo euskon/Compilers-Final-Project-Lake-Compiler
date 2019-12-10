@@ -12,7 +12,7 @@ all: $(TESTS)
 	@echo "TEST $*"
 	@../lakec $*.lake -o $*.s ;\
 	PROG_EXIT_CODE=$$?;\
-	as -o $*.o;\
+	as $*.s -o $*.o;\
 	ld -o $*.out $(LIBLINUX) -lc ../entry.o ../stdlake.o $*.o; \
 	./$*.out < $*.in > $*.out; \
 	diff -B --ignore-all-space $*.out $*.out.expected;\

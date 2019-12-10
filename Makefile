@@ -45,4 +45,4 @@ p6: all
 	$(MAKE) -C p6_tests/
 
 cleantest:
-	$(MAKE) -C p5_tests/ clean
+	$(MAKE) -C p6_tests/ clean

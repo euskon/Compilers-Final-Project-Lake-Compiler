@@ -60,6 +60,10 @@ void Procedure::allocLocals(){
 		loc += 8;
 		++localItr;
 	}
+	for(auto tempItr : temps){
+		tempItr->setMemoryLoc("-" + to_string(loc) + "(%rbp)");
+		loc += 8;
+	}
 }
 
 void Procedure::toX64(std::ostream& out){
@@ -130,37 +134,43 @@ void BinOpQuad::codegenX64(std::ostream& out){
 				src1->genLoad(out, "%rax");
 				src2->genLoad(out, "%rbx");
 				out << "cmpq %rbx, %rax\n";
-				out << "sete %r15\n";
+				out << "sete %al\n";
+				out << "movq %rax, %r15\n";
 				break;
 		case NEQ:
 				src1->genLoad(out, "%rax");
 				src2->genLoad(out, "%rbx");
 				out << "cmpq %rbx, %rax\n";
-				out << "setne %r15\n";
+				out << "setne %al\n";
+				out << "movq %rax, %r15\n";
 				break;
 		case LT:
 				src1->genLoad(out, "%rax");
 				src2->genLoad(out, "%rbx");
 				out << "cmpq %rbx, %rax\n";
-				out << "setl %r15\n";
+				out << "setl %al\n";
+				out << "movq %rax, %r15\n";
 				break;
 		case GT:
 				src1->genLoad(out, "%rax");
 				src2->genLoad(out, "%rbx");
 				out << "cmpq %rbx, %rax\n";
-				out << "setg %r15\n";
+				out << "setg %al\n";
+				out << "movq %rax, %r15\n";
 				break;
 		case LTE:
 				src1->genLoad(out, "%rax");
 				src2->genLoad(out, "%rbx");
 				out << "cmpq %rbx, %rax\n";
-				out << "setle %r15\n";
+				out << "setle %al\n";
+				out << "movq %rax, %r15\n";
 				break;
 		case GTE:
 				src1->genLoad(out, "%rax");
 				src2->genLoad(out, "%rbx");
 				out << "cmpq %rbx, %rax\n";
-				out << "setge %r15\n";
+				out << "setge %al\n";
+				out << "movq %rax, %r15\n";
 				break;
 	}
 }
@@ -173,7 +183,7 @@ void UnaryOpQuad::codegenX64(std::ostream& out){
 	}
 	else if(op == NOT){
 		src->genLoad(out, "%rbx");
-		out << "notq %rbx\n";
+		out << "xorq $1, %rbx\n";
 		dst->genStore(out, "%rbx");
 	}
 }
@@ -192,8 +202,14 @@ void JmpQuad::codegenX64(std::ostream& out){
 }
 
 void JmpIfQuad::codegenX64(std::ostream& out){
-	
-	out << "jmpif" << tgt->toString() << "\n";
+	if(invert){
+		out << "cmpq $1, %r15\n";
+		out << "je " << tgt->toString() << "\n";
+	}
+	else{
+		out << "cmpq $0, %r15\n";
+		out << "jne " << tgt->toString() << "\n";
+	}
 }
 
 void NopQuad::codegenX64(std::ostream& out){

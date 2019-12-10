@@ -1,4 +1,4 @@
-int fn(){
+int main(){
 	int a;
 	a = 4;
 	write a;
