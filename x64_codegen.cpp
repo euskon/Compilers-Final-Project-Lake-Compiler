@@ -146,6 +146,7 @@ void BinOpQuad::codegenX64(std::ostream& out){
 				out << "cmpq %rbx, %rax\n";
 				out << "sete %al\n";
 				out << "movq %rax, %r15\n";
+				dst->genStore(out, "%rax");
 				break;
 		case NEQ:
 				src1->genLoad(out, "%rax");
@@ -153,6 +154,7 @@ void BinOpQuad::codegenX64(std::ostream& out){
 				out << "cmpq %rbx, %rax\n";
 				out << "setne %al\n";
 				out << "movq %rax, %r15\n";
+				dst->genStore(out, "%rax");
 				break;
 		case LT:
 				src1->genLoad(out, "%rax");
@@ -160,6 +162,7 @@ void BinOpQuad::codegenX64(std::ostream& out){
 				out << "cmpq %rbx, %rax\n";
 				out << "setl %al\n";
 				out << "movq %rax, %r15\n";
+				dst->genStore(out, "%rax");
 				break;
 		case GT:
 				src1->genLoad(out, "%rax");
@@ -167,6 +170,7 @@ void BinOpQuad::codegenX64(std::ostream& out){
 				out << "cmpq %rbx, %rax\n";
 				out << "setg %al\n";
 				out << "movq %rax, %r15\n";
+				dst->genStore(out, "%rax");
 				break;
 		case LTE:
 				src1->genLoad(out, "%rax");
@@ -174,6 +178,7 @@ void BinOpQuad::codegenX64(std::ostream& out){
 				out << "cmpq %rbx, %rax\n";
 				out << "setle %al\n";
 				out << "movq %rax, %r15\n";
+				dst->genStore(out, "%rax");
 				break;
 		case GTE:
 				src1->genLoad(out, "%rax");
@@ -181,6 +186,7 @@ void BinOpQuad::codegenX64(std::ostream& out){
 				out << "cmpq %rbx, %rax\n";
 				out << "setge %al\n";
 				out << "movq %rax, %r15\n";
+				dst->genStore(out, "%rax");
 				break;
 	}
 }
@@ -212,12 +218,13 @@ void JmpQuad::codegenX64(std::ostream& out){
 }
 
 void JmpIfQuad::codegenX64(std::ostream& out){
-	if(invert){
-		out << "cmpq $1, %r15\n";
+	cnd->genLoad(out, "%r15");
+	if(!invert){
+		out << "cmpq $0, %r15\n";
 		out << "je " << tgt->toString() << "\n";
 	}
 	else{
-		out << "cmpq $0, %r15\n";
+		out << "cmpq $1, %r15\n";
 		out << "jne " << tgt->toString() << "\n";
 	}
 }

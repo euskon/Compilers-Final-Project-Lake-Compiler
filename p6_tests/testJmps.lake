@@ -5,11 +5,45 @@ void foo(){
     write "foo";
 }
 int main(){
-    write true;
-    if(true){
+    if(true || false){
         foo();
+    }
+    if(true && true){
+        foo();
+    }
+    if(1 < 2){
+        foo();
+    }
+    if(5 <= 5){
+        foo();
+    }
+    if(6 != 7){
+        foo();
+    }
+
+    if(1 > 2){
+
     }
     else{
         bar();
     }
+    if(true && false){
+
+    }
+    else{
+        bar();
+    }
+    if(false || false){
+
+    }
+    else{
+        bar();
+    }
+    if(6 == 7){
+
+    }
+    else{
+        bar();
+    }
+    
 }
