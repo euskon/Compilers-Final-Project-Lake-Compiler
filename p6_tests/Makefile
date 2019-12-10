@@ -20,4 +20,4 @@ all: $(TESTS)
 	exit $$TAC_DIFF_EXIT
 
 clean:
-	rm -f *.3ac *.out *.err *.prog *.s
+	rm -f *.3ac *.out *.err *.prog *.s *.o
